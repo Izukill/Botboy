@@ -54,7 +54,12 @@ public class Fase extends JPanel implements Runnable {
     public void paintComponent(Graphics g){
         super.paintComponent(g); //sem chamar a superClasse podem ocorrer alguns bugs durante a pintura da fase
 
-        g.drawImage(botboy.getImg().getSubimage(0,0,300,400),dX,dY,150,150,null);
+        botboy.updateAnimation();
+
+        g.drawImage(botboy.getAnimation().get(botboy.getBotboyAction()),dX,dY,150,150,null);
+
+
+
 
 
         //Contador de Fps do jogo
