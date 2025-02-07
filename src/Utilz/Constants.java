@@ -13,9 +13,9 @@ public class Constants {
 
         //Aqui é passado o total de imagens que são usadas para todas as animações a cima
         //A função é criada para não ocorrer nenhum OutOfBounds erro
-        public static int GetTotalSprites(int BotboyActions){
+        public static int GetTotalSprites(int BotboyActions) {
 
-            switch (BotboyActions){
+            switch (BotboyActions) {
                 case running:
                     return 3;
                 case standing:
@@ -33,8 +33,19 @@ public class Constants {
 
 
             }
-            return 0;
+            return 1;
         }
+
+    }
+
+
+    public static class Directions{
+            public static final int up = 0;
+            public static final int left = 1;
+            public static final int right = 2;
+            public static final int down = 3;
+
+
 
     }
 }

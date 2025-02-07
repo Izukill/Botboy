@@ -5,12 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Fase extends JPanel implements Runnable {
-    private Botboy botboy;
-    private int dX,dY;
+    private final Botboy botboy;
     private Thread gameLoop;
-    private final int fpsLimite=60;
-    private int gameFrames;
-    private long lastCheck;
 
     public Fase(){
 
@@ -28,6 +24,7 @@ public class Fase extends JPanel implements Runnable {
 
         setPanelSize();
         IniciarGameLoop();
+
 
 
     }
@@ -54,42 +51,85 @@ public class Fase extends JPanel implements Runnable {
     public void paintComponent(Graphics g){
         super.paintComponent(g); //sem chamar a superClasse podem ocorrer alguns bugs durante a pintura da fase
 
-        botboy.updateAnimation();
 
-        g.drawImage(botboy.getAnimation().get(botboy.getBotboyAction()),dX,dY,150,150,null);
-
+        botboy.drawModel(g);
 
 
-
-
-        //Contador de Fps do jogo
-        gameFrames++;
-        if (System.currentTimeMillis() - lastCheck >=1000){
-            lastCheck= System.currentTimeMillis();
-            System.out.println("Frames= "+ gameFrames);
-            gameFrames =0;
-        }
 
 
     }
 
 
+    //Função que chama toda a lógica do jogo
+    public void loadGame(){
 
-    //Função que vai ser usada para fazer o jogo rodar
+        botboy.update();
+
+    }
+
+
+
+    //Função que vai ser usada para fazer o jogo rodar chamado na Thread
     @Override
     public void run() {
 
-        //É utilizado nanosegundos/fpsLimite para que o jogo n "trancar" durante o processo
-        double frames= 1000000000 / fpsLimite; //variavel que decidi em quantos frames o jogo vai rodar
-        long ultimoFrame= System.nanoTime();
-        long agora;
+
+        int fpsLimite = 60;
+        int upsLimite = 200;
+
+        //É utilizado nanosegundos/fpsLimite por causa do System.nanoTime()
+        double timePerFrame= 1000000000 / fpsLimite; //variavel que decidi o tempo máximo de cada frame
+        double timePerUps= 1000000000 / upsLimite;   //variavel que decidi o tempo máximo de cada update da lógica
+
+
+        //Inicialização do Tempo
+        long tempoAnterior= System.nanoTime();
+
+        int gameFrames=0;
+        int gameUpdates=0;
+
+        long lastCheck= System.currentTimeMillis();//marca o tempo para calcular fps e ups
+
+        //variaveis que guardam o tempo para renderizar e atualizar o jogo
+        double deltaU=0;
+        double deltaF=0;
 
         while(true){
+            long tempoAtual= System.nanoTime();
 
-            agora= System.nanoTime();
-            if(agora - ultimoFrame >= frames){
+
+            deltaU+= (tempoAtual - tempoAnterior)/ timePerUps;
+            deltaF+= (tempoAtual - tempoAnterior)/ timePerFrame;
+            tempoAnterior= tempoAtual;
+
+            if(deltaU >= 1){
+                loadGame();
+                gameUpdates++;
+                deltaU--;
+            }
+
+            if(deltaF >=1){
                 repaint();
-                ultimoFrame=agora;
+                gameFrames++;
+                deltaF--;
+
+            }
+
+
+
+            //Contador de Fps do jogo
+            if (System.currentTimeMillis() - lastCheck >=1000){
+                lastCheck= System.currentTimeMillis();
+                System.out.println("Frames= "+ gameFrames +" | Ups= "+ gameUpdates);
+                gameFrames =0;
+                gameUpdates=0;
+            }
+
+            //Pausa da thread
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
         }
@@ -112,19 +152,19 @@ public class Fase extends JPanel implements Runnable {
             switch (e.getKeyCode()){
                 case KeyEvent.VK_W:
 
-                    dY-=20;
+                    botboy.Moves(0);
                     break;
                 case KeyEvent.VK_A:
 
-                    dX-=20;
+                    botboy.Moves(1);
                     break;
                 case KeyEvent.VK_S:
 
-                    dY+=20;
+                    botboy.Moves(3);
                     break;
                 case KeyEvent.VK_D:
 
-                    dX+=20;
+                    botboy.Moves(2);
                     break;
             }
 
@@ -135,19 +175,19 @@ public class Fase extends JPanel implements Runnable {
             switch (e.getKeyCode()){
                 case KeyEvent.VK_W:
 
-                    dY+=0;
+                    botboy.setMoving(false);
                     break;
                 case KeyEvent.VK_A:
 
-                    dX+=0;
+                    botboy.setMoving(false);
                     break;
                 case KeyEvent.VK_S:
 
-                    dY+=0;
+                    botboy.setMoving(false);
                     break;
                 case KeyEvent.VK_D:
 
-                    dX+=0;
+                    botboy.setMoving(false);
                     break;
             }
 
@@ -155,7 +195,7 @@ public class Fase extends JPanel implements Runnable {
 
     }
 
-    private class MouseInputs implements MouseListener, MouseMotionListener{
+    private static class MouseInputs implements MouseListener, MouseMotionListener{
 
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -188,9 +228,6 @@ public class Fase extends JPanel implements Runnable {
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            dX=e.getX();
-            dY=e.getY();
-
 
         }
     }
