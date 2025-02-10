@@ -1,19 +1,24 @@
 package Game;
 
+import Level.LevelManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import static Utilz.Constants.GameSizes.*;
 
 public class Fase extends JPanel implements Runnable {
-    private final Botboy botboy;
+    private Botboy botboy;
+    private LevelManager levelManager;
     private Thread gameLoop;
+
 
     public Fase(){
 
         setFocusable(true);
         setDoubleBuffered(true);
 
-        botboy=new Botboy();
+        startModels(); //Inicializando os modelos antes da criação do loop do game
 
 
 
@@ -30,13 +35,19 @@ public class Fase extends JPanel implements Runnable {
     }
 
     private void setPanelSize() {
-        Dimension tamanhoTela=new Dimension(1200,800);
+        Dimension tamanhoTela=new Dimension(game_width,game_height);
         setPreferredSize(tamanhoTela);
+        System.out.println("Size:"+ game_width+" | "+ game_height);
     }
 
     private void IniciarGameLoop(){
         gameLoop=new Thread(this);
         gameLoop.start();
+    }
+
+    private void startModels(){
+        botboy=new Botboy();
+        levelManager=new LevelManager(this);
     }
 
 
@@ -51,8 +62,7 @@ public class Fase extends JPanel implements Runnable {
     public void paintComponent(Graphics g){
         super.paintComponent(g); //sem chamar a superClasse podem ocorrer alguns bugs durante a pintura da fase
 
-
-        botboy.drawModel(g);
+        render(g);
 
 
 
@@ -64,6 +74,16 @@ public class Fase extends JPanel implements Runnable {
     public void loadGame(){
 
         botboy.update();
+        levelManager.update();
+
+    }
+
+
+    //Função que desenha os modelos no jogo
+    public void render(Graphics g){
+
+        levelManager.draw(g);
+        botboy.drawModel(g);
 
     }
 
@@ -136,6 +156,10 @@ public class Fase extends JPanel implements Runnable {
 
     }
 
+    public Botboy getBotboy() {
+        return botboy;
+    }
+
 
     //Área onde as classes dos inputs são criadas para o contrutor da fase
 
@@ -151,21 +175,23 @@ public class Fase extends JPanel implements Runnable {
 
             switch (e.getKeyCode()){
                 case KeyEvent.VK_W:
-
-                    botboy.Moves(0);
+                    getBotboy().setUp(true);
                     break;
-                case KeyEvent.VK_A:
 
-                    botboy.Moves(1);
-                    break;
                 case KeyEvent.VK_S:
-
-                    botboy.Moves(3);
+                    getBotboy().setDown(true);
                     break;
+
+                case KeyEvent.VK_A:
+                    getBotboy().setLeft(true);
+                    break;
+
                 case KeyEvent.VK_D:
-
-                    botboy.Moves(2);
+                    getBotboy().setRight(true);
                     break;
+                case KeyEvent.VK_ENTER:
+                    getBotboy().setAttacking(true);
+
             }
 
         }
@@ -174,21 +200,23 @@ public class Fase extends JPanel implements Runnable {
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()){
                 case KeyEvent.VK_W:
-
-                    botboy.setMoving(false);
+                    getBotboy().setUp(false);
                     break;
-                case KeyEvent.VK_A:
 
-                    botboy.setMoving(false);
-                    break;
                 case KeyEvent.VK_S:
-
-                    botboy.setMoving(false);
+                    getBotboy().setDown(false);
                     break;
+
+                case KeyEvent.VK_A:
+                    getBotboy().setLeft(false);
+                    break;
+
                 case KeyEvent.VK_D:
-
-                    botboy.setMoving(false);
+                    getBotboy().setRight(false);
                     break;
+                case KeyEvent.VK_ENTER:
+                    getBotboy().setAttacking(false);
+
             }
 
         }

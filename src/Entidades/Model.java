@@ -1,40 +1,40 @@
 package Entidades;
 
-import javax.imageio.ImageIO;
+import Utilz.LoadSave;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static Utilz.Constants.BotboyConstants.*;
-import static Utilz.Constants.Directions.*;
 
 public abstract class Model {
     protected float x,y;
+
     private BufferedImage img;
     private List<BufferedImage[]> animation;
     private int aniTick,aniIndex,aniSpeed=20;
     private int BotboyAction= running;
-    private int BotboyDir = -1;
-    private boolean isMoving;
+
+    private boolean up,down,left,right;
+    private float modelSpeed=3.0f;
+    private boolean isMoving, isAttacking;
 
 
-    public Model(float x,float y){
+    public Model(float x,float y,String imagem){
         this.x=x;
         this.y=y;
-        this.importImg();
-        this.loadAnimation();
+        this.loadAnimation(imagem);
 
     }
 
     public void update(){
+        this.updatePos();
         this.updateAnimation();
         this.setAniAction();
-        this.updatePos();
+
 
     }
 
@@ -45,36 +45,20 @@ public abstract class Model {
 
 
 
-    //Função para importar a imagem da animação na variável img
-    private void importImg() {
-        InputStream is= getClass().getResourceAsStream("/Botboy.png");
-        try {
-            img= ImageIO.read(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-    }
-
 
 
 
 
     //Função para carregar a animação dentro do Animation
-    protected void loadAnimation() {
+    protected void loadAnimation(String fileName) {
+
+        BufferedImage img= LoadSave.getImageAtlas(fileName);
 
         animation =new ArrayList<>();
-        int frameWidth = 300;
-        int frameHeight = 400;
-        int colunas = 3;
-        int linhas = 3;
+        int frameWidth = 163;
+        int frameHeight = 163;
+        int colunas = 5;
+        int linhas = 6;
 
         // Loop para extrair cada frame em um Array bidimensional
         for (int lin = 0; lin < linhas; lin++) {
@@ -100,6 +84,7 @@ public abstract class Model {
             aniIndex++;
             if(aniIndex >= GetTotalSprites(BotboyAction)){
                 aniIndex=0;
+                isAttacking=false;
             }
         }
 
@@ -107,50 +92,80 @@ public abstract class Model {
 
 
 
-    //Função que muda as animações de acordo com o movimento do Botboy
-    public void Moves(int direction){
-        this.BotboyDir= direction;
-        isMoving=true;
 
 
-    }
 
-    public void setMoving(boolean moving) {
-        isMoving = moving;
-    }
 
     protected void setAniAction(){
+
+        int start= BotboyAction;
+
+
         if(isMoving){
-            setBotboyAction(running);
-        }else {
-            setBotboyAction(standing);
+            if(isAttacking){
+                this.setBotboyAction(movingAttack);
+
+            }else setBotboyAction(running);
+
+        }else if(isAttacking){
+            this.setBotboyAction(attack);
+
+
+        }else setBotboyAction(standing);
+
+        if (start != BotboyAction){
+            this.resetAniTick();
+        }
+    }
+
+    private void resetAniTick() {
+        this.aniTick=0;
+        if (BotboyAction != movingAttack){
+            this.aniIndex=0;
         }
     }
 
     protected void updatePos(){
-        if(isMoving){
-            switch (BotboyDir){
-                case 0:
-                    y-=5;
-                    break;
-                case 1:
-                    x-=5;
-                    break;
-                case 2:
-                    x+=5;
-                    break;
-                case 3:
-                    y+=5;
-            }
+
+        this.isMoving=false; //Colocando o isMoving=false inicialmente para não bugar a animação
+
+
+        if(left && !right){
+            this.x-=modelSpeed;
+            this.isMoving=true;
+
+        } else if (right && !left) {
+            this.x+=modelSpeed;
+            this.isMoving=true;
         }
+
+        if(up && !down){
+            this.y-=modelSpeed;
+            this.isMoving=true;
+
+        }else if (down && !up){
+            this.y+=modelSpeed;
+            this.isMoving=true;
+
+        }
+
     }
 
+
+    //Função para controlar a animação a depender da ação
     public BufferedImage getAnimation(){
         if(BotboyAction == running ){
-            return animation.get(0)[aniIndex];
+            return animation.get(1)[aniIndex];
 
         } else if (BotboyAction == standing) {
-            return animation.get(0)[0];
+            return animation.get(0)[aniIndex];
+
+        } else if (BotboyAction == attack) {
+            return animation.get(1)[4];
+
+        } else if (BotboyAction == movingAttack){
+            int[] frames = {1, 2, 3, 4}; // Índices corretos dos frames
+            return animation.get(2)[frames[aniIndex % frames.length]];
 
         }else return animation.get(0)[0];
     }
@@ -164,6 +179,16 @@ public abstract class Model {
         BotboyAction = botboyAction;
     }
 
+
+
+    public boolean isAttacking() {
+        return isAttacking;
+    }
+
+    public void setAttacking(boolean attacking) {
+        isAttacking = attacking;
+    }
+
     public float getX() {
         return x;
     }
@@ -171,4 +196,39 @@ public abstract class Model {
     public float getY() {
         return y;
     }
+
+
+    public boolean isUp() {
+        return up;
+    }
+
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+
+    public boolean isDown() {
+        return down;
+    }
+
+    public void setDown(boolean down) {
+        this.down = down;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public boolean isRight() {
+        return right;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+
+
 }

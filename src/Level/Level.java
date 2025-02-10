@@ -1,0 +1,16 @@
+package Level;
+
+public class Level {
+    private int[][] lvlData;
+
+    public Level(int[][] lvlData){
+        this.lvlData=lvlData;
+
+    }
+
+    public int getTotalindex(int x,int y){
+        return lvlData[y][x];
+    }
+
+
+}

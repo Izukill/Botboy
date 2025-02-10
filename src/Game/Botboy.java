@@ -6,16 +6,12 @@ public class Botboy extends Model {
 
 
     Botboy(){
-        super(100,100);
+        super(300,300,"/Botboy.png");
 
 
 
 
     }
-
-
-
-
 
 
 
