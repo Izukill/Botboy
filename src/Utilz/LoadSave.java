@@ -39,24 +39,20 @@ public class LoadSave {
     public static int[][] getLevelData(){
 
 
-        BufferedImage img= getImageAtlas("/Level.png");
-        int[][] lvlData = new int[img.getHeight()][img.getWidth()];
+        BufferedImage img= getImageAtlas("/level_one_data.png");
+        int[][] lvlData = new int[tiles_in_height][tiles_in_width];
 
+        for (int j = 0; j < img.getHeight() ; j++) {
+            for (int i = 0; i < img.getWidth() ; i++) {
+                Color color=new Color(img.getRGB(i,j));
+                int value=color.getRed();
+                if(value >=48){
+                    value=0;
+                }
+                lvlData[j][i]= value;
 
-        for (int lin = 0; lin < img.getHeight(); lin++) {
-            for (int col = 0; col < img.getWidth(); col++) {
-                int rgb = img.getRGB(col, lin);
-                Color color = new Color(rgb, true); // Garante que está pegando a transparência corretamente
-                int tileID = color.getRed(); // Pegando apenas o canal vermelho
-
-                // 🔍 Teste para ver os valores
-                System.out.println("Pixel (" + col + ", " + lin + ") -> RGB: " + rgb + " | Red: " + color.getRed());
-
-                lvlData[lin][col] = tileID;
             }
         }
-
-
 
         return lvlData;
     }

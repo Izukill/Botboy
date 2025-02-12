@@ -12,7 +12,7 @@ import static Utilz.Constants.GameSizes.*;
 
 public class LevelManager {
     private Fase fase;
-    private List<BufferedImage> levelImg;
+    private BufferedImage[] levelImg;
     private Level levelOne;
 
     public LevelManager(Fase fase){
@@ -27,41 +27,32 @@ public class LevelManager {
     //Função que importa a imagem do Level
     private void importLevelimages() {
         BufferedImage img= LoadSave.getImageAtlas("/Level.png");
-        levelImg=new ArrayList<>();
+        levelImg= new BufferedImage[48];
 
-        int lin= img.getHeight()/tiles_size;
-        int col= img.getWidth()/tiles_size;
+        for(int j=0; j < 4; j++){
+            for (int i = 0; i < 12 ; i++) {
+                int index= j*12 +i;
+                levelImg[index]=img.getSubimage(i*32,j*32,32,32);
 
-        for (int y = 0; y < lin; y++) {
-            for (int x = 0; x < col; x++) {
-                BufferedImage tile = img.getSubimage(x * 32, y * 32, 32, 32);
-                levelImg.add(tile);
             }
         }
+
+
 
     }
 
     public void draw(Graphics g) {
 
-        for (int lin = 0; lin < tiles_in_height; lin++) {
-            for (int col = 0; col < tiles_in_width; col++) {
-                int index = levelOne.getTotalindex(col, lin);
-
-
-                if (index < 0 || index >= levelImg.size()) {
-                    continue;
-                }
-                g.drawImage(levelImg.get(index), col * tiles_size, lin * tiles_size, tiles_size, tiles_size, null);
-//                if (index == 2) {
-//                    g.drawImage(levelImg.get(1), col * tiles_size, lin * tiles_size, tiles_size, tiles_size, null);
-//                } else {
-//                    g.drawImage(levelImg.get(index), col * tiles_size, lin * tiles_size, tiles_size, tiles_size, null);
-//                }
-
+        for (int j = 0; j < tiles_in_height ; j++) {
+            for (int i = 0; i < tiles_in_width ; i++) {
+                int index= levelOne.getTotalindex(i,j);
+                g.drawImage(levelImg[index],tiles_size * i,tiles_size * j,tiles_size,tiles_size,null);
 
             }
 
         }
+
+
     }
 
     public void update(){
@@ -69,7 +60,13 @@ public class LevelManager {
     }
 
 
-
-
-
+    public Level getLevel(){
+        return levelOne;
+    }
 }
+
+
+
+
+
+

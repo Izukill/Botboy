@@ -13,12 +13,16 @@ public class Fase extends JPanel implements Runnable {
     private Thread gameLoop;
 
 
+
+
+
     public Fase(){
 
         setFocusable(true);
         setDoubleBuffered(true);
 
         startModels(); //Inicializando os modelos antes da criação do loop do game
+
 
 
 
@@ -46,9 +50,13 @@ public class Fase extends JPanel implements Runnable {
     }
 
     private void startModels(){
-        botboy=new Botboy();
         levelManager=new LevelManager(this);
+        botboy=new Botboy();
+        botboy.loadLevelData(levelManager.getLevel().getLvlData());
+
     }
+
+
 
 
 
@@ -84,6 +92,7 @@ public class Fase extends JPanel implements Runnable {
 
         levelManager.draw(g);
         botboy.drawModel(g);
+
 
     }
 
@@ -191,6 +200,11 @@ public class Fase extends JPanel implements Runnable {
                     break;
                 case KeyEvent.VK_ENTER:
                     getBotboy().setAttacking(true);
+                    break;
+
+                case KeyEvent.VK_SPACE:
+                    getBotboy().setJumping(true);
+                    break;
 
             }
 
@@ -216,7 +230,11 @@ public class Fase extends JPanel implements Runnable {
                     break;
                 case KeyEvent.VK_ENTER:
                     getBotboy().setAttacking(false);
+                    break;
 
+                case KeyEvent.VK_SPACE:
+                    getBotboy().setJumping(false);
+                    break;
             }
 
         }

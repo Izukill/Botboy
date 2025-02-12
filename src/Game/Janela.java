@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class Janela extends JFrame {
 
-    public Janela(){
+    public Janela() {
         setTitle("Botboy");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         add(new Fase());

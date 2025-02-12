@@ -21,9 +21,9 @@ public class Constants {
                     return 4;
                 case standing:
                     return 3;
-                case hit:
-                    return 1;
                 case jumping:
+                    return 1;
+                case hit:
                     return 1;
                 case falling:
                     break;
