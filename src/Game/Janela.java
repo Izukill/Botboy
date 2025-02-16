@@ -14,7 +14,6 @@ public class Janela extends JFrame {
         setVisible(true);
     }
 
-
     public static void main(String[] args) {
          Janela jogo = new Janela();
     }

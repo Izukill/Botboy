@@ -35,13 +35,20 @@ public class Botboy extends Model {
 
     //Funcao para desenhar o botboy tem que ser diferente dos outros modelos
     public void drawBotboy(Graphics g, int lvlOffset) {
-        g.drawImage(this.getAnimation(), (int)(hitbox.x-hitboxX)-lvlOffset,(int)(hitbox.y-hitboxY),width,height,null);
+        int drawX = (int)(hitbox.x - hitboxX) - lvlOffset;
+        int drawY = (int)(hitbox.y - hitboxY);
+
+        if (this.isFacingLeft()) {
+            g.drawImage(this.getAnimation(), drawX + width, drawY, -width, height, null);
+        } else {
+            g.drawImage(this.getAnimation(), drawX, drawY, width, height, null);
+        }
     }
 
 
     public void loadShoot(int lvlOffset){
         int direction;
-        if(isLeft()){
+        if(this.isFacingLeft()){
             direction=-1;
         }else{
             direction=1;

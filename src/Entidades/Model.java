@@ -28,6 +28,7 @@ public abstract class Model {
     private List<BufferedImage[]> animation;
     private int aniTick,aniIndex,aniSpeed=20;
     private int BotboyAction= running;
+    private boolean facingLeft = false;
 
 
     //Movimento
@@ -200,10 +201,12 @@ public abstract class Model {
         if (left) {
             dX -= modelSpeed;
             this.isMoving = true;
+            this.facingLeft=true;
         }
         if (right) {
             dX += modelSpeed;
             this.isMoving = true;
+            this.facingLeft=false;
         }
 
         //Verificando se está no ar
@@ -355,6 +358,11 @@ public abstract class Model {
 
     public void setRight(boolean right) {
         this.right = right;
+    }
+
+
+    public boolean isFacingLeft() {
+        return facingLeft;
     }
 
     public boolean isInAir() {

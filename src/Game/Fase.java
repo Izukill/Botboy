@@ -21,7 +21,7 @@ public class Fase extends JPanel implements Runnable {
 
     // Renderização do mapa sobre o personagem
     private int xLvlOffset;
-    private int leftBord= (int) (0.2*game_width), rightBord = (int) (0.8*game_width);
+    private int leftBord= (int) (0.30*game_width), rightBord = (int) (0.50*game_width);
     private int lvlTilesWide= LoadSave.getLevelData()[0].length;
     private int maxtilesOffset= lvlTilesWide - tiles_in_width;
     private int maxLvlOffsetX= maxtilesOffset * tiles_size;
@@ -120,8 +120,8 @@ public class Fase extends JPanel implements Runnable {
 
 
         if(botboy.getHitbox().getY()>=569){
-            inGame = false;
             botboy.setBotboyAction(4);//Animação de dano
+            inGame = false;
         }
 
         }else{
@@ -145,6 +145,9 @@ public class Fase extends JPanel implements Runnable {
     private void checkBoder() {
         int botBoyX= (int) botboy.getHitbox().x;
         int diff = botBoyX - xLvlOffset;
+
+
+
         if(diff > rightBord){
             xLvlOffset +=diff - rightBord;
         } else if (diff < leftBord) {
@@ -165,7 +168,6 @@ public class Fase extends JPanel implements Runnable {
 
         levelManager.draw(g, xLvlOffset);
         botboy.drawBotboy(g, xLvlOffset);
-        //botboy.gameOver(g, xLvlOffset);
 
         List<Shoot> shoots= botboy.getShoots();
         for (int i = 0; i < shoots.size(); i++) {
