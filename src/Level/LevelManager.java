@@ -6,9 +6,9 @@ import Utilz.LoadSave;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 
 import static Utilz.Constants.GameSizes.*;
+
 
 public class LevelManager {
     private Fase fase;
@@ -24,9 +24,11 @@ public class LevelManager {
     }
 
 
+
+
     //Função que importa a imagem do Level
     private void importLevelimages() {
-        BufferedImage img= LoadSave.getImageAtlas("/Level.png");
+        BufferedImage img= LoadSave.getSpriteImage("/Level.png");
         levelImg= new BufferedImage[48];
 
         for(int j=0; j < 4; j++){
@@ -41,12 +43,14 @@ public class LevelManager {
 
     }
 
-    public void draw(Graphics g) {
+    public void draw(Graphics g, int lvlOffset) {
+
+        int faseLenght= levelOne.getLvlData()[0].length;
 
         for (int j = 0; j < tiles_in_height ; j++) {
-            for (int i = 0; i < tiles_in_width ; i++) {
+            for (int i = 0; i < faseLenght ; i++) {
                 int index= levelOne.getTotalindex(i,j);
-                g.drawImage(levelImg[index],tiles_size * i,tiles_size * j,tiles_size,tiles_size,null);
+                g.drawImage(levelImg[index],tiles_size * i - lvlOffset,tiles_size * j,tiles_size,tiles_size,null);
 
             }
 
@@ -54,6 +58,11 @@ public class LevelManager {
 
 
     }
+
+
+
+
+
 
     public void update(){
 
@@ -63,6 +72,8 @@ public class LevelManager {
     public Level getLevel(){
         return levelOne;
     }
+
+
 }
 
 

@@ -32,10 +32,12 @@ public class Collision {
     //Função que determina se o ponto do mapa é sólido ou não
     public static boolean isSolid(float x,float y,int[][] lvlData){
 
+        int maxFaseWidth = lvlData[0].length*tiles_size;
+
         float xIndex= x/tiles_size;
         float yIndex= y/tiles_size;
 
-        if(x<0 || x>=game_width){
+        if(x<0 || x>=maxFaseWidth){
             return true;
         }
         if(y<0 || y>=game_height){
@@ -77,7 +79,7 @@ public class Collision {
     public static boolean IsModelOnFloor(Rectangle2D.Float hitbox,int [][] lvldata){
         float bottomLeftX = hitbox.x +1;
         float bottomRightX = hitbox.x + hitbox.width -1;
-        float bottomY = hitbox.y + hitbox.height + 1; // Verifica ligeiramente abaixo
+        float bottomY = hitbox.y + hitbox.height + 1; //Verifica logo abaixo do Botboy
 
         return isSolid(bottomLeftX, bottomY, lvldata) || isSolid(bottomRightX, bottomY, lvldata);
     }

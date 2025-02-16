@@ -1,17 +1,30 @@
 package Game;
 
+import Entidades.Shoot;
 import Level.LevelManager;
+import Utilz.LoadSave;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
+
 import static Utilz.Constants.GameSizes.*;
 
 public class Fase extends JPanel implements Runnable {
     private Botboy botboy;
     private LevelManager levelManager;
     private Thread gameLoop;
+    private boolean inGame=true;
 
+
+
+    // Renderização do mapa sobre o personagem
+    private int xLvlOffset;
+    private int leftBord= (int) (0.2*game_width), rightBord = (int) (0.8*game_width);
+    private int lvlTilesWide= LoadSave.getLevelData()[0].length;
+    private int maxtilesOffset= lvlTilesWide - tiles_in_width;
+    private int maxLvlOffsetX= maxtilesOffset * tiles_size;
 
 
 
@@ -32,7 +45,7 @@ public class Fase extends JPanel implements Runnable {
         addMouseMotionListener(new MouseInputs());
 
         setPanelSize();
-        IniciarGameLoop();
+        startGameLoop();
 
 
 
@@ -44,10 +57,16 @@ public class Fase extends JPanel implements Runnable {
         System.out.println("Size:"+ game_width+" | "+ game_height);
     }
 
-    private void IniciarGameLoop(){
-        gameLoop=new Thread(this);
-        gameLoop.start();
+    private void startGameLoop(){
+            gameLoop=new Thread(this);
+            gameLoop.start();
+
     }
+
+
+
+
+
 
     private void startModels(){
         levelManager=new LevelManager(this);
@@ -81,8 +100,62 @@ public class Fase extends JPanel implements Runnable {
     //Função que chama toda a lógica do jogo
     public void loadGame(){
 
+        if(inGame){
+
         botboy.update();
         levelManager.update();
+        checkBoder();
+
+
+        List<Shoot> shoots= botboy.getShoots();
+
+            for (int i = 0; i < shoots.size(); i++) {
+                Shoot m = shoots.get(i);
+                if (m.isVisible()) {
+                    m.shoot();
+                } else {
+                    shoots.remove(i);
+                }
+            }
+
+
+        if(botboy.getHitbox().getY()>=569){
+            inGame = false;
+            botboy.setBotboyAction(4);//Animação de dano
+        }
+
+        }else{
+            System.out.println("Game Over!");
+            JOptionPane.showMessageDialog(this,"Game Over!","Fim de Jogo",JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0); // Encerra o jogo
+        }
+
+
+
+
+
+
+
+
+
+    }
+
+
+    //Função que muda a borda do mapa no personagem
+    private void checkBoder() {
+        int botBoyX= (int) botboy.getHitbox().x;
+        int diff = botBoyX - xLvlOffset;
+        if(diff > rightBord){
+            xLvlOffset +=diff - rightBord;
+        } else if (diff < leftBord) {
+            xLvlOffset +=diff - leftBord;
+        }
+
+        if(xLvlOffset > maxLvlOffsetX){
+            xLvlOffset= maxLvlOffsetX;
+        } else if (xLvlOffset<0) {
+            xLvlOffset=0;
+        }
 
     }
 
@@ -90,8 +163,17 @@ public class Fase extends JPanel implements Runnable {
     //Função que desenha os modelos no jogo
     public void render(Graphics g){
 
-        levelManager.draw(g);
-        botboy.drawModel(g);
+        levelManager.draw(g, xLvlOffset);
+        botboy.drawBotboy(g, xLvlOffset);
+        //botboy.gameOver(g, xLvlOffset);
+
+        List<Shoot> shoots= botboy.getShoots();
+        for (int i = 0; i < shoots.size(); i++) {
+            Shoot m = shoots.get(i);
+            m.drawShoot(g);
+        }
+
+
 
 
     }
@@ -124,6 +206,8 @@ public class Fase extends JPanel implements Runnable {
         double deltaF=0;
 
         while(true){
+
+
             long tempoAtual= System.nanoTime();
 
 
@@ -169,6 +253,9 @@ public class Fase extends JPanel implements Runnable {
         return botboy;
     }
 
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
+    }
 
     //Área onde as classes dos inputs são criadas para o contrutor da fase
 
@@ -229,6 +316,7 @@ public class Fase extends JPanel implements Runnable {
                     getBotboy().setRight(false);
                     break;
                 case KeyEvent.VK_ENTER:
+                    botboy.loadShoot(xLvlOffset);
                     getBotboy().setAttacking(false);
                     break;
 

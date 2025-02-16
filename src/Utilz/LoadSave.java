@@ -5,16 +5,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-
-import static Utilz.Constants.GameSizes.*;
 
 public class LoadSave {
 
 
 
     //Função que importa imagens para a váriavel img
-    public static BufferedImage getImageAtlas(String fileName){
+    public static BufferedImage getSpriteImage(String fileName){
         BufferedImage img;
         InputStream is= LoadSave.class.getResourceAsStream(fileName);
 
@@ -39,8 +36,8 @@ public class LoadSave {
     public static int[][] getLevelData(){
 
 
-        BufferedImage img= getImageAtlas("/level_one_data.png");
-        int[][] lvlData = new int[tiles_in_height][tiles_in_width];
+        BufferedImage img= getSpriteImage("/level_one_data_long.png");
+        int[][] lvlData = new int[img.getHeight()][img.getWidth()];
 
         for (int j = 0; j < img.getHeight() ; j++) {
             for (int i = 0; i < img.getWidth() ; i++) {
@@ -56,4 +53,6 @@ public class LoadSave {
 
         return lvlData;
     }
+
+
 }
