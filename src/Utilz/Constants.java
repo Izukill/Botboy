@@ -7,7 +7,7 @@ public class Constants {
         public static final int running = 1;
         public static final int jumping = 2;
         public static final int hit = 3;
-        public static final int falling = 4;
+        public static final int damage = 4;
         public static final int attack = 5;
         public static final int airAttack = 6;
         public static final int movingAttack = 7;
@@ -25,7 +25,7 @@ public class Constants {
                     return 1;
                 case hit:
                     return 1;
-                case falling:
+                case damage:
                     break;
                 case attack:
                     return 1;
@@ -42,15 +42,6 @@ public class Constants {
     }
 
 
-    public static class Directions{
-            public static final int up = 0;
-            public static final int left = 1;
-            public static final int right = 2;
-            public static final int down = 3;
-
-
-
-    }
 
     public static class GameSizes{
         public final static int tile_def_size=32;
@@ -63,4 +54,5 @@ public class Constants {
 
 
     }
+
 }

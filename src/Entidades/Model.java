@@ -16,7 +16,6 @@ import static Utilz.Constants.GameSizes.scale;
 public abstract class Model {
     //Posição
     protected float x,y;
-    private float dX=0,dY=0;
 
     //Hitbox
 
@@ -103,7 +102,7 @@ public abstract class Model {
     //Função para carregar a animação dentro do Animation
     protected void loadAnimation(String fileName) {
 
-        BufferedImage img= LoadSave.getImageAtlas(fileName);
+        BufferedImage img= LoadSave.getSpriteImage(fileName);
 
         animation =new ArrayList<>();
         int frameWidth = 163;
@@ -196,15 +195,14 @@ public abstract class Model {
         }
 
         // Reseta as mudaças de posição para não atualizar infinito
-        this.dX = 0;
-        this.dY = 0;
+        float dX = 0;
 
         if (left) {
-            this.dX -= modelSpeed;
+            dX -= modelSpeed;
             this.isMoving = true;
         }
         if (right) {
-            this.dX += modelSpeed;
+            dX += modelSpeed;
             this.isMoving = true;
         }
 
@@ -239,6 +237,7 @@ public abstract class Model {
         }else {
             this.inAir = true;
         }
+
 
     }
 
@@ -287,6 +286,8 @@ public abstract class Model {
 
         }else if (BotboyAction == airAttack){
             return animation.get(2)[0];
+        }else if (BotboyAction == damage){
+            return animation.get(3)[1];
         }else return animation.get(0)[0];
     }
 
@@ -298,8 +299,6 @@ public abstract class Model {
     public void setBotboyAction(int botboyAction) {
         BotboyAction = botboyAction;
     }
-
-
 
 
 
@@ -373,4 +372,5 @@ public abstract class Model {
     public void setAirSpeed(float airSpeed) {
         this.airSpeed = airSpeed;
     }
+
 }
