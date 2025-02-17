@@ -12,13 +12,15 @@ import static Utilz.Constants.GameSizes.scale;
 public class Botboy extends Model {
 
     // Posição/Hitbox
-    private static float x =1000,y =200;
+    private static float x =200,y =400;
     private float hitboxX =10.0f, hitboxY =10.0f;
     private static final int width = 120;
     private static final int height = 120;
 
     // Ataque
     private List<Shoot> shoots;
+    private long lastShotTime = 0;
+    private final long shotCooldown = 500; //Variaveis para controlar o cooldown do ataque
 
 
 
@@ -46,15 +48,22 @@ public class Botboy extends Model {
     }
 
 
-    public void loadShoot(int lvlOffset){
-        int direction;
-        if(this.isFacingLeft()){
-            direction=-1;
-        }else{
-            direction=1;
-        }
+    public void loadShoot(int lvlOffset) {
 
-        shoots.add(new Shoot((int)((hitbox.x-hitboxX)-lvlOffset)+50,(int)(hitbox.y-hitboxY)+50,direction));
+        long currentTime = System.currentTimeMillis();
+
+        int direction;
+
+        if (currentTime - lastShotTime >= shotCooldown) {
+            if (this.isFacingLeft()) {
+                direction = -1;
+            } else {
+                direction = 1;
+            }
+
+            shoots.add(new Shoot((int) ((hitbox.x - hitboxX) - lvlOffset) + 50, (int) (hitbox.y - hitboxY) + 50, direction));
+            lastShotTime= currentTime;
+        }
     }
 
     public List<Shoot> getShoots() {

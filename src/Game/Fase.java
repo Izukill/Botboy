@@ -21,7 +21,7 @@ public class Fase extends JPanel implements Runnable {
 
     // Renderização do mapa sobre o personagem
     private int xLvlOffset;
-    private int leftBord= (int) (0.30*game_width), rightBord = (int) (0.50*game_width);
+    private int leftBord= (int) (0.3*game_width), rightBord = (int) (0.5*game_width);
     private int lvlTilesWide= LoadSave.getLevelData()[0].length;
     private int maxtilesOffset= lvlTilesWide - tiles_in_width;
     private int maxLvlOffsetX= maxtilesOffset * tiles_size;
