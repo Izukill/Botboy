@@ -12,7 +12,7 @@ import static Utilz.Constants.GameSizes.game_width;
 public class Shoot {
     private float x,y;
     protected Rectangle2D.Float hitbox;
-    private float speed= 4.0f;
+    private float speed= 6.5f;
     private boolean isVisible;
     private int direction;
 
@@ -39,7 +39,6 @@ public class Shoot {
     public void drawShoot(Graphics g){
         BufferedImage img= LoadSave.getSpriteImage("/shoot.png");
         g.drawImage(img,(int)this.x,(int)this.y,20,20,null);
-        drawHitbox(g);
 
     }
 
