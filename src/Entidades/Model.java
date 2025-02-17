@@ -44,6 +44,9 @@ public abstract class Model {
     private boolean inAir = false;
     private boolean jump;
 
+    //Sistema de vida
+    protected int Health;
+
 
     public Model(float x,float y,int width,int height, String imagem){
         this.x=x;
@@ -292,6 +295,12 @@ public abstract class Model {
         }else if (BotboyAction == damage){
             return animation.get(3)[1];
         }else return animation.get(0)[0];
+    }
+
+
+
+    public int healthCheck(){
+        return this.Health;
     }
 
 

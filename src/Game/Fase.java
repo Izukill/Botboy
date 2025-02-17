@@ -119,9 +119,8 @@ public class Fase extends JPanel implements Runnable {
             }
 
 
-        if(botboy.getHitbox().getY()>=569){
-            botboy.setBotboyAction(4);//Animação de dano
-            inGame = false;
+        if(botboy.healthCheck() <=0){
+            inGame=false;
         }
 
         }else{
@@ -174,6 +173,9 @@ public class Fase extends JPanel implements Runnable {
             Shoot m = shoots.get(i);
             m.drawShoot(g);
         }
+
+        botboy.drawHealth(g);
+
 
 
 
