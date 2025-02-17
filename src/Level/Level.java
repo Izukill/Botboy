@@ -8,13 +8,10 @@ public class Level {
 
     public Level(int[][] lvlData){
         this.lvlData=lvlData;
-        startVoid();
+
 
     }
 
-    private void startVoid() {
-        //voids= LevelManager.getVoid(LoadSave.getSpriteImage("Botboy.png"));
-    }
 
     public int getTotalindex(int x,int y){
         return lvlData[y][x];
