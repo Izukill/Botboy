@@ -7,6 +7,8 @@ import Utilz.LoadSave;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.util.Iterator;
 import java.util.List;
 
 import static Utilz.Constants.GameSizes.*;
@@ -108,15 +110,16 @@ public class Fase extends JPanel implements Runnable {
 
 
         List<Shoot> shoots= botboy.getShoots();
-
-            for (int i = 0; i < shoots.size(); i++) {
-                Shoot m = shoots.get(i);
-                if (m.isVisible()) {
+        Iterator<Shoot> iterator = shoots.iterator();
+        while (iterator.hasNext()) {
+            Shoot m = iterator.next();
+            if (m.isVisible()) {
                     m.shoot();
-                } else {
-                    shoots.remove(i);
-                }
+            } else {
+                iterator.remove(); // Remover tiros que saíram da tela//
+                m=null;
             }
+        }
 
 
         if(botboy.healthCheck() <=0){
@@ -180,6 +183,7 @@ public class Fase extends JPanel implements Runnable {
 
 
 
+
     }
 
 
@@ -189,7 +193,7 @@ public class Fase extends JPanel implements Runnable {
     public void run() {
 
 
-        int fpsLimite = 60;
+        int fpsLimite = 120;
         int upsLimite = 200;
 
         //É utilizado nanosegundos/fpsLimite por causa do System.nanoTime()

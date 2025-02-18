@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import static Utilz.Constants.BotboyConstants.damage;
 import static Utilz.Constants.GameSizes.scale;
 
 public class Botboy extends Model {
@@ -23,6 +24,7 @@ public class Botboy extends Model {
     private List<Shoot> shoots;
     private long lastShotTime = 0;
     private final long shotCooldown = 500; //Variaveis para controlar o cooldown do ataque
+    private boolean isShooting=false;
 
 
 
@@ -74,13 +76,16 @@ public class Botboy extends Model {
                 break;
 
             case 2:
+                this.setBotboyAction(damage);
                 g.drawImage(health2,0,0,350,100,null);
                 break;
 
             case 1:
+                this.setBotboyAction(damage);
                 g.drawImage(health1,0,0,350,100,null);
                 break;
             case 0:
+                this.setBotboyAction(damage);
                 g.drawImage(health0,0,0,350,100,null);
         }
     }
@@ -103,15 +108,18 @@ public class Botboy extends Model {
 
             shoots.add(new Shoot((int) ((hitbox.x - hitboxX) - lvlOffset) + 50, (int) (hitbox.y - hitboxY) + 50, direction));
             lastShotTime= currentTime;
-        }
+
+            isShooting = true;
+        }else isShooting=false;
     }
 
     public List<Shoot> getShoots() {
         return shoots;
     }
 
-
-
+    public boolean isShooting() {
+        return isShooting;
+    }
 }
 
 
