@@ -167,7 +167,7 @@ public class Fase extends JPanel implements Runnable {
 
     //Função que desenha os modelos no jogo
     public void render(Graphics g){
-
+        renderBackground(g, xLvlOffset);
         levelManager.draw(g, xLvlOffset);
         botboy.drawBotboy(g, xLvlOffset);
 
@@ -182,6 +182,19 @@ public class Fase extends JPanel implements Runnable {
 
 
 
+
+
+    }
+
+    public void renderBackground(Graphics g, int xLvlOffset){
+        BufferedImage background=LoadSave.getSpriteImage("/background.png");
+
+        int imgWidth= 1248;
+        int imgHeight= 672;
+
+        for (int x = -xLvlOffset; x < game_width; x += imgWidth) {
+            g.drawImage(background, x, 0, imgWidth, imgHeight, null);
+        }
 
 
     }
