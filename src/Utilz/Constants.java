@@ -6,11 +6,10 @@ public class Constants {
         public static final int standing = 0;
         public static final int running = 1;
         public static final int jumping = 2;
-        public static final int hit = 3;
-        public static final int damage = 4;
-        public static final int attack = 5;
-        public static final int airAttack = 6;
-        public static final int movingAttack = 7;
+        public static final int damage = 3;
+        public static final int attack = 4;
+        public static final int airAttack = 5;
+        public static final int movingAttack = 6;
 
         //Aqui é passado o total de imagens que são usadas para todas as animações a cima
         //A função é criada para não ocorrer nenhum OutOfBounds erro
@@ -23,10 +22,8 @@ public class Constants {
                     return 3;
                 case jumping:
                     return 1;
-                case hit:
-                    return 1;
                 case damage:
-                    break;
+                    return 1;
                 case attack:
                     return 1;
                 case airAttack:
@@ -38,6 +35,31 @@ public class Constants {
             }
             return 1;
         }
+
+    }
+
+    public static class MetalKnightConstants{
+        public static final int idle=0;
+        public static final int attacking=1;
+        public static final int hurt=2;
+        public static final int die=3;
+
+
+        public static int GetTotalSpriteboss(int MetalKnightActions){
+
+            switch (MetalKnightActions){
+                case idle:
+                    return 1;
+                case attacking:
+                    return 5;
+                case hurt:
+                    return 1;
+                case die:
+                    return 2;
+            }
+            return 1;
+        }
+
 
     }
 

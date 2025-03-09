@@ -8,6 +8,13 @@ public class Collision {
 
 
 
+
+
+    public static boolean isHitboxIntersect(Rectangle2D.Float hitbox1, Rectangle2D.Float hitbox2) {
+        return hitbox1.intersects(hitbox2);
+    }
+
+
     //Função que verifica se o objeto pode se mover em uma posição
     public static boolean canMove(float x,float y, float width, float height,int[][] lvlData){
 
@@ -26,6 +33,8 @@ public class Collision {
 
         return false;
     }
+
+
 
 
 
@@ -53,14 +62,15 @@ public class Collision {
     }
 
     public static float getModelX(Rectangle2D.Float hitbox,float dX){
-        int currentTile = (int)(hitbox.x/tiles_size);
-        if(dX>0){
-            //Direita
-            int tileXpos = (currentTile+1)*tiles_size;
-            int xOffSet = (int)(tiles_size-hitbox.width);
-            return tileXpos + xOffSet -1;
-        }else return currentTile * tiles_size; //Esquerda
+        if (dX > 0) { //indo para a direita
 
+            int tileX = (int) ((hitbox.x + hitbox.width) / tiles_size);
+            return tileX * tiles_size - hitbox.width;
+
+        } else { //indo para a esquerda
+            int tileX = (int) (hitbox.x / tiles_size);
+            return tileX * tiles_size;
+        }
 
     }
 
@@ -79,7 +89,7 @@ public class Collision {
     public static boolean IsModelOnFloor(Rectangle2D.Float hitbox,int [][] lvldata){
         float bottomLeftX = hitbox.x +1;
         float bottomRightX = hitbox.x + hitbox.width -1;
-        float bottomY = hitbox.y + hitbox.height + 1; //Verifica logo abaixo do Botboy
+        float bottomY = hitbox.y + hitbox.height + 1; //Verifica logo abaixo do model
 
         return isSolid(bottomLeftX, bottomY, lvldata) || isSolid(bottomRightX, bottomY, lvldata);
     }
