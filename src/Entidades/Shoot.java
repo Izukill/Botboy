@@ -1,6 +1,5 @@
 package Entidades;
 
-import Game.Botboy;
 import Utilz.LoadSave;
 
 import java.awt.*;
@@ -36,8 +35,11 @@ public class Shoot {
         g.drawRect((int)hitbox.x,(int)hitbox.y,(int)hitbox.width, (int)hitbox.height);
     }
 
-    public void drawShoot(Graphics g){
+    public void drawShoot(Graphics g, int lvlOffset){
         BufferedImage img= LoadSave.getSpriteImage("/shoot.png");
+
+
+
         g.drawImage(img,(int)this.x,(int)this.y,20,20,null);
 
     }
@@ -53,7 +55,15 @@ public class Shoot {
 
     }
 
+    public Rectangle2D.Float getHitbox() {
+        return hitbox;
+    }
+
     public boolean isVisible() {
         return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 }

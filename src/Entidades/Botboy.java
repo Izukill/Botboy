@@ -1,7 +1,5 @@
-package Game;
+package Entidades;
 
-import Entidades.Model;
-import Entidades.Shoot;
 import Utilz.LoadSave;
 
 import java.awt.*;
@@ -15,7 +13,7 @@ import static Utilz.Constants.GameSizes.scale;
 public class Botboy extends Model {
 
     // Posição/Hitbox
-    private static float x =200,y =400;
+    private static float x =200,y =100;
     private float hitboxX =10.0f, hitboxY =10.0f;
     private static final int width = 120;
     private static final int height = 120;
@@ -30,37 +28,31 @@ public class Botboy extends Model {
 
 
 
-    Botboy() {
+
+
+    public Botboy() {
         super(x, y, width, height, "/Botboy.png");
-        startHitbox(x, y, 48*scale, (float)67.5*scale );
+        startHitbox(x, y, 48*scale, (float)70.5*scale );
+        this.loadAnimation("/Botboy.png");
 
         shoots=new ArrayList<Shoot>();
         this.Health=3;
     }
 
 
-    //Funcao para desenhar o botboy tem que ser diferente dos outros modelos
-    public void drawBotboy(Graphics g, int lvlOffset) {
-        int drawX = (int)(hitbox.x - hitboxX) - lvlOffset;
-        int drawY = (int)(hitbox.y - hitboxY);
-
-        if (this.isFacingLeft()) {
-            g.drawImage(this.getAnimation(), drawX + width, drawY, -width, height, null);
-        } else {
-            g.drawImage(this.getAnimation(), drawX, drawY, width, height, null);
-        }
-    }
 
 
 
     //Função que manipula a vida do Botboy
     public int healthCheck(){
-        if(this.hitbox.y >= 569){ //Altura do void do jogo
+        if(this.hitbox.y >= 564){ //Altura do void do jogo
             this.Health=0;
         }
 
         return this.Health;
     }
+
+
 
 
     public void drawHealth(Graphics g){
@@ -76,12 +68,12 @@ public class Botboy extends Model {
                 break;
 
             case 2:
-                this.setBotboyAction(damage);
+
                 g.drawImage(health2,0,0,350,100,null);
                 break;
 
             case 1:
-                this.setBotboyAction(damage);
+
                 g.drawImage(health1,0,0,350,100,null);
                 break;
             case 0:
@@ -120,6 +112,11 @@ public class Botboy extends Model {
     public boolean isShooting() {
         return isShooting;
     }
+
+    public float botBoyX(){
+        return this.hitbox.x;
+    }
+
 }
 
 

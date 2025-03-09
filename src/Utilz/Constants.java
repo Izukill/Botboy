@@ -38,6 +38,31 @@ public class Constants {
 
     }
 
+    public static class MetalKnightConstants{
+        public static final int idle=0;
+        public static final int attacking=1;
+        public static final int hurt=2;
+        public static final int die=3;
+
+
+        public static int GetTotalSpriteboss(int MetalKnightActions){
+
+            switch (MetalKnightActions){
+                case idle:
+                    return 1;
+                case attacking:
+                    return 5;
+                case hurt:
+                    return 1;
+                case die:
+                    return 2;
+            }
+            return 1;
+        }
+
+
+    }
+
 
 
     public static class GameSizes{

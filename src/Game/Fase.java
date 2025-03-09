@@ -1,7 +1,10 @@
 package Game;
 
+import Entidades.Boss;
+import Entidades.Botboy;
 import Entidades.Shoot;
 import Level.LevelManager;
+import Utilz.Collision;
 import Utilz.LoadSave;
 
 import javax.swing.*;
@@ -15,9 +18,11 @@ import static Utilz.Constants.GameSizes.*;
 
 public class Fase extends JPanel implements Runnable {
     private Botboy botboy;
+    private Boss boss;
     private LevelManager levelManager;
     private Thread gameLoop;
     private boolean inGame=true;
+    private boolean endGame=false;
 
 
 
@@ -74,12 +79,27 @@ public class Fase extends JPanel implements Runnable {
         levelManager=new LevelManager(this);
         botboy=new Botboy();
         botboy.loadLevelData(levelManager.getLevel().getLvlData());
+        boss=new Boss();
+        boss.loadLevelData(levelManager.getLevel().getLvlData());
 
     }
 
+    private void restartGame(){
+        inGame = true;
+        endGame = false;
+        botboy = new Botboy();
+        botboy.loadLevelData(levelManager.getLevel().getLvlData());
+        boss = new Boss();
+        boss.loadLevelData(levelManager.getLevel().getLvlData());
 
 
 
+
+        //Métodos para repintar a tela mostrando o game over
+        loadGame();
+        repaint();
+        revalidate();
+    }
 
 
 
@@ -94,19 +114,29 @@ public class Fase extends JPanel implements Runnable {
         render(g);
 
 
-
-
     }
 
 
     //Função que chama toda a lógica do jogo
     public void loadGame(){
 
-        if(inGame){
+        if(inGame & !endGame){
 
         botboy.update();
+        boss.update();
         levelManager.update();
-        checkBoder();
+        //checkBoder();
+
+
+        boss.moveToBotboy(botboy.getHitbox().x);
+        boss.checkAttack(botboy.getHitbox().x);
+        if(boss.healthCheck()==0){
+            endGame=true;
+        }
+        if(Collision.isHitboxIntersect(boss.getHitbox(),botboy.getHitbox())){
+            botboy.takeDamage(1);
+        }
+
 
 
         List<Shoot> shoots= botboy.getShoots();
@@ -115,6 +145,11 @@ public class Fase extends JPanel implements Runnable {
             Shoot m = iterator.next();
             if (m.isVisible()) {
                     m.shoot();
+                if (Collision.isHitboxIntersect(m.getHitbox(),boss.getHitbox())) {
+                    boss.takeDamage(1);
+                    m.setVisible(false);
+                    iterator.remove();
+                }
             } else {
                 iterator.remove(); // Remover tiros que saíram da tela//
                 m=null;
@@ -122,14 +157,13 @@ public class Fase extends JPanel implements Runnable {
         }
 
 
-        if(botboy.healthCheck() <=0){
+        if(botboy.healthCheck() <=0){//Terminar jogo
             inGame=false;
+
         }
 
         }else{
-            System.out.println("Game Over!");
-            JOptionPane.showMessageDialog(this,"Game Over!","Fim de Jogo",JOptionPane.INFORMATION_MESSAGE);
-            System.exit(0); // Encerra o jogo
+            repaint();
         }
 
 
@@ -144,45 +178,95 @@ public class Fase extends JPanel implements Runnable {
 
 
     //Função que muda a borda do mapa no personagem
-    private void checkBoder() {
-        int botBoyX= (int) botboy.getHitbox().x;
-        int diff = botBoyX - xLvlOffset;
-
-
-
-        if(diff > rightBord){
-            xLvlOffset +=diff - rightBord;
-        } else if (diff < leftBord) {
-            xLvlOffset +=diff - leftBord;
-        }
-
-        if(xLvlOffset > maxLvlOffsetX){
-            xLvlOffset= maxLvlOffsetX;
-        } else if (xLvlOffset<0) {
-            xLvlOffset=0;
-        }
-
-    }
+//    private void checkBoder() {
+//        int botBoyX= (int) botboy.getHitbox().x;
+//        int diff = botBoyX - xLvlOffset;
+//
+//
+//
+//        if(diff > rightBord){
+//            xLvlOffset +=diff - rightBord;
+//        } else if (diff < leftBord) {
+//            xLvlOffset +=diff - leftBord;
+//        }
+//
+//        if(xLvlOffset > maxLvlOffsetX){
+//            xLvlOffset= maxLvlOffsetX;
+//        } else if (xLvlOffset<0) {
+//            xLvlOffset=0;
+//        }
+//
+//    }
 
 
     //Função que desenha os modelos no jogo
     public void render(Graphics g){
-        renderBackground(g, xLvlOffset);
+        //renderBackground(g, xLvlOffset);
         levelManager.draw(g, xLvlOffset);
-        botboy.drawBotboy(g, xLvlOffset);
+        botboy.drawModel(g, xLvlOffset);
+        boss.drawModel(g, xLvlOffset);
+
 
         List<Shoot> shoots= botboy.getShoots();
         for (int i = 0; i < shoots.size(); i++) {
             Shoot m = shoots.get(i);
-            m.drawShoot(g);
+            m.drawShoot(g, xLvlOffset);
         }
 
         botboy.drawHealth(g);
+        boss.renderBossHealthBar(g);
+
+
+
+
+        endGame(g);
+
+        gameOver(g);
 
 
 
 
 
+
+    }
+
+
+    //Função para carregar a tela de gameOver
+    public void gameOver(Graphics g){
+        if(!inGame & !endGame){
+            g.setColor(new Color(0, 0, 0, 150));
+            g.fillRect(0, 0, game_width, game_height);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.drawString("Game Over", game_width / 2 - 100, game_height / 2 - 100);
+
+            g.setColor(Color.RED);
+            g.fillRect(game_width / 2 - 75, game_height / 2, 150, 50);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 25));
+            g.drawString("Play Again", game_width / 2 - 55, game_height / 2 + 35);
+        }
+    }
+
+    //Função para carregar a tela de endGame
+    private void endGame(Graphics g){
+        if(endGame){
+            g.setColor(new Color(0, 0, 0, 150));
+            g.fillRect(0, 0, game_width, game_height);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.drawString("You win", game_width / 2 - 100, game_height / 2 - 100);
+
+            g.setColor(Color.GREEN);
+            g.fillRect(game_width / 2 - 90, game_height / 2, 150, 50);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 25));
+            g.drawString("Play Again", game_width / 2 - 87, game_height / 2 + 35);
+        }
 
     }
 
@@ -350,10 +434,24 @@ public class Fase extends JPanel implements Runnable {
 
     }
 
-    private static class MouseInputs implements MouseListener, MouseMotionListener{
+    private class MouseInputs implements MouseListener, MouseMotionListener{
 
         @Override
         public void mouseClicked(MouseEvent e) {
+            if (!inGame || endGame) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();
+
+                int btnX = game_width / 2 - 75;
+                int btnY = game_height / 2;
+                int btnWidth = 150;
+                int btnHeight = 50;
+
+                if (mouseX >= btnX && mouseX <= btnX + btnWidth && mouseY >= btnY && mouseY <= btnY + btnHeight) {
+                    restartGame();
+                }
+            }
+
         }
 
         @Override
@@ -363,6 +461,19 @@ public class Fase extends JPanel implements Runnable {
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            if (!inGame || endGame) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();
+
+                int btnX = game_width / 2 - 75;
+                int btnY = game_height / 2;
+                int btnWidth = 150;
+                int btnHeight = 50;
+
+                if (mouseX >= btnX && mouseX <= btnX + btnWidth && mouseY >= btnY && mouseY <= btnY + btnHeight) {
+                    restartGame();
+                }
+            }
 
         }
 

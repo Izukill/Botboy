@@ -36,7 +36,7 @@ public class LoadSave {
     public static int[][] getLevelData(){
 
 
-        BufferedImage img= getSpriteImage("/fase2.png");
+        BufferedImage img= getSpriteImage("/faseboss.png");
         int[][] lvlData = new int[img.getHeight()][img.getWidth()];
 
         for (int j = 0; j < img.getHeight() ; j++) {
